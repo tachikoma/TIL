@@ -11,7 +11,7 @@
 
 아래 링크에서 github 계정과 프로젝트 이름만 있으면 생성해서 상단에 표시되는 것과 같이 카운트를 붙일 수 있다.
 
-http://hits.dwyl.io/
+[HITS!](http://hits.dwyl.io/)
 
 ## github page
 github 내용으로 웹사이트를 만들어 주는 기능
