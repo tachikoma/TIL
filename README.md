@@ -13,6 +13,9 @@
 
 http://hits.dwyl.io/
 
+## github page
+github 내용으로 웹사이트를 만들어 주는 기능
+
 ## Static Site Generator
 요즘 일반적인 동적으로 페이지를 생성하는 방식 말고, 이미 만들어진 페이지를 만들어 주는 도구
 * [github를 웹호스팅으로 이용하기](https://opentutorials.org/module/2398/16117)
