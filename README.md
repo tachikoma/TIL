@@ -1,6 +1,6 @@
 [![HitCount](http://hits.dwyl.io/tachikoma/TIL.svg)](http://hits.dwyl.io/tachikoma/TIL)
 
-TIL 시작
+# Today I Learned
 
 히트 카운트 재미있는 기능이다.
 
