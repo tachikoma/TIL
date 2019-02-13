@@ -1,0 +1,23 @@
+doctype html
+html
+    head
+        title Index Page
+        style
+            * { margin:0px; padding:0px; }
+            h1 { 
+            |    color: red;
+            |}
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        script(src="http://code.jquery.com/jquery-1.10.2.js")
+        script
+            $(document).ready(function () {
+            |   const alpha = 10;
+            |})
+    body
+        // JADE String
+        #header
+            h1 Hello #{name} .. !
+            h2 #{description}
+        hr
+        .article
+            a(href="http://hanb.co.kr", data-test="multiple Attribute") Go To Hanbit Media
