@@ -1,5 +1,9 @@
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize('node_api_codelab', 'root', '1234', {dialect: 'mysql', host: 'localhost'})
+const Sequelize = require('sequelize')
+const config = require('./config/environment')
+const sequelize = new Sequelize(config.mysql.database, config.mysql.username, config.mysql.password, {
+    dialect: 'mysql',
+    host: 'localhost'
+})
 
 const User = sequelize.define('user', {
     name: Sequelize.STRING
