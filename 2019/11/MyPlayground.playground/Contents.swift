@@ -107,3 +107,18 @@ paragraph = nil
 let names = ["크리스", "f알렉스", "1이와", "배리", "다니엘라"]
 var reversedNames = names.sorted(by: >)
 
+var optionalName = "Jone Appleseed" as String?
+var greeting = "Hello!"
+if let name = optionalName {
+    greeting = "hello, \(name)"
+}
+print(greeting)
+
+var optionalString = "Hello" as String?
+
+if let str = optionalString {
+    print(str)
+} else {
+    print("str is nil")
+}
+
