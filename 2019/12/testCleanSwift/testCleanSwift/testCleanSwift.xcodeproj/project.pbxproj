@@ -33,6 +33,8 @@
 		};
 		739330D723938A0F000E9552 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
+			containerPortal = 739330AD23938A0C000E9552 /* Project object */;
+			proxyType = 1;
 			remoteGlobalIDString = 739330B423938A0C000E9552;
 			remoteInfo = testCleanSwift;
 		};
