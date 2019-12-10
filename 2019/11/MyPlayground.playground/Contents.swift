@@ -1,4 +1,5 @@
 import UIKit
+import AVFoundation
 
 var str = "Hello, playground"
 
@@ -122,3 +123,30 @@ if let str = optionalString {
     print("str is nil")
 }
 
+protocol ContnetPresentable: class/*, Layout*/ {
+    var frame: CGRect { get set }
+    var canPresentContent: Bool { get }
+}
+
+extension ContnetPresentable {
+    var canPresentContent: Bool {
+        return true
+    }
+}
+
+extension UIImageView: ContnetPresentable {
+    
+}
+
+extension AVPlayerLayer: ContnetPresentable {
+}
+
+struct someStrut {
+    var name: String
+}
+
+/* 클래스만 가능함
+extension someStrut: ContnetPresentable {
+    
+}
+*/

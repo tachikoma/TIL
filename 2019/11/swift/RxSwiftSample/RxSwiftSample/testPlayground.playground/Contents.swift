@@ -351,3 +351,53 @@ func uniqueElements<T: Sequence, U: Sequence>(_ lhs: T, _ rhs: U) -> Array<T.Ele
 }
 var u = uniqueElements([1,2,3], [3])
 print(u)
+
+enum LogLevel: String {
+    case trace, debug, info, warn, error, fatal
+}
+
+@discardableResult func log(_ message: String, level: LogLevel = .info) -> String {
+    let logLine = "[\(level)] \(Date()): \(message)"
+    print(logLine)
+    return logLine
+}
+
+log("Hello, world!")
+
+var scores = ["Sophie": 5, "James": 2]
+_ = scores.updateValue(3, forKey: "James")
+
+protocol Marker {
+    var hhh: String { get set }
+    init()
+    func copy() -> Self
+}
+
+class Marker1: Marker {
+    private var phHh: String
+    
+    var hhh: String {
+        get {
+            return phHh
+        }
+        
+        set {
+            phHh = newValue
+        }
+        
+    }
+    
+    required init() {
+        self.phHh = "hahaha"
+    }
+    func copy() -> Self {
+        let copy = type(of:self).init()
+        return copy
+    }
+}
+
+let marker1 = Marker1()
+print(marker1.hhh)
+let marker = marker1.copy()
+
+
