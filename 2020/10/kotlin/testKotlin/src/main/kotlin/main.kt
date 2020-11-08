@@ -1,9 +1,13 @@
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
@@ -20,9 +24,9 @@ fun main(args: Array<String>) {
     val observable: Observable<Any> = list.toObservable()
 
     observable.subscribeBy(
-            onNext = { println(it) },
-            onError = { it.printStackTrace() },
-            onComplete = { println("Done!") }
+        onNext = { println(it) },
+        onError = { it.printStackTrace() },
+        onComplete = { println("Done!") }
     )
 
     val subject: Subject<Int> = PublishSubject.create()
@@ -101,6 +105,45 @@ fun main(args: Array<String>) {
     }
 
     println(fibonacciSeries.take(10).joinToString(", "))
+
+    println("---------------------------------------------")
+
+    val flowable = Flowable.range(1, 111)
+    flowable.buffer(10, 15).subscribe {
+        println("Subscription 1 $it")
+    }
+    flowable.buffer(15, 7).subscribe {
+        println("Subscription 2 $it")
+    }
+
+    println("---------------------------------------------")
+
+    val flowable2 = Flowable.interval(100, TimeUnit.MILLISECONDS)
+    flowable2.buffer(1, TimeUnit.SECONDS).subscribe {
+        println(it)
+    }
+
+    runBlocking {
+        delay(5000)
+    }
+
+    println("---------------------------------------------")
+
+    val flowable3 = Flowable.range(1, 111)
+    flowable3.window(10).subscribe { flo ->
+        flo.subscribe {
+            print("$it, ")
+        }
+        println()
+    }
+
+    println("---------------------------------------------")
+
+    val flowable4 = Flowable.interval(100, TimeUnit.MILLISECONDS)
+    flowable4.throttleFirst(200, TimeUnit.MILLISECONDS).subscribe {
+        println(it)
+    }
+    runBlocking { delay(1000) }
 
     println("=============================================")
 

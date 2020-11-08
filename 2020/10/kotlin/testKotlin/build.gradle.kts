@@ -14,7 +14,7 @@ dependencies {
     testImplementation(kotlin("test-junit"))
     implementation("io.reactivex.rxjava2:rxjava:2.1.0")
     implementation("io.reactivex.rxjava2:rxkotlin:2.1.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
 }
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "1.8"
