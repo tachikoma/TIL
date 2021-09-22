@@ -14,7 +14,7 @@ final class WKCookieProcessPool: WKProcessPool {
 
 class CookieShareWKWebView: WKWebView {
     override init(frame: CGRect, configuration: WKWebViewConfiguration) {
-        configuration.processPool = WKCookieProcessPool.pool  // cookie 공유
+        configuration.processPool = WKCookieProcessPool.pool // cookie 공유
         super.init(frame: frame, configuration: configuration)
     }
 
@@ -23,14 +23,14 @@ class CookieShareWKWebView: WKWebView {
     }
 }
 
-class WebViewController: UIViewController, WKUIDelegate {
-
+class WebViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     var webView: CookieShareWKWebView!
 
     override func loadView() {
         let webConfiguration = WKWebViewConfiguration()
         webView = CookieShareWKWebView(frame: .zero, configuration: webConfiguration)
         webView.uiDelegate = self
+        webView.navigationDelegate = self
         view = webView
     }
 
@@ -41,16 +41,22 @@ class WebViewController: UIViewController, WKUIDelegate {
         let myRequest = URLRequest(url: myURL!)
         webView.load(myRequest)
     }
-    
+
+    func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
+                 completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        let credential = URLCredential(user: "account",
+                                       password: "password",
+                                       persistence: .forSession)
+        completionHandler(.useCredential, credential)
+    }
 
     /*
-    // MARK: - Navigation
+     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         // Get the new view controller using segue.destination.
+         // Pass the selected object to the new view controller.
+     }
+     */
 }
