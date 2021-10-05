@@ -49,34 +49,32 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String) {
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth()
             .background(Color.White)
     ) {
-        LazyColumn(modifier = Modifier.fillMaxHeight()) {
-            item {
-                mapViewItem(name)
+        item {
+            mapViewItem(name)
+        }
+        item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(360 / 335f)
+                    .background(Color.Yellow)
+            ) {
+                Text("2021.11.12")
             }
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(360/335f)
-                        .background(Color.Yellow)
-                ) {
-                    Text("2021.11.12")
-                }
-            }
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(360/120f)
-                        .background(Color.Cyan)
-                )
-            }
+        }
+        item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(360 / 120f)
+                    .background(Color.Cyan)
+            )
         }
     }
 }
@@ -146,6 +144,8 @@ private fun mapViewItem(name: String) {
 @Composable
 fun DefaultPreview() {
     ComposeTutorialTheme {
-        Greeting("Android")
+        Surface(color = MaterialTheme.colors.background) {
+            Greeting("Android")
+        }
     }
 }
