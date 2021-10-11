@@ -71,4 +71,6 @@ dependencies {
 
     // LeakCanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+
+    implementation project(path: ':Helper')
 }

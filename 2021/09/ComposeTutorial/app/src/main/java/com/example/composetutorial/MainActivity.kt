@@ -1,5 +1,6 @@
 package com.example.composetutorial
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -38,15 +39,25 @@ class MainActivity : ComponentActivity() {
             ComposeTutorialTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    Greeting("Android") {
+                        gotoWebView(it)
+                    }
                 }
             }
         }
     }
+
+    private fun gotoWebView(url: String?) {
+        startActivity(Intent(this, WebViewActivity::class.java).apply {
+            url?.let {
+                putExtra("EXTRA_URL", it)
+            }
+        })
+    }
 }
 
 @Composable
-fun Greeting(name: String) {
+fun Greeting(name: String, gotoWebViewCallback: ((String) -> Unit)? = null) {
 
     LazyColumn(
         modifier = Modifier
@@ -62,8 +73,10 @@ fun Greeting(name: String) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(360 / 335f)
-                    .background(Color.Yellow).clickable {
+                    .background(Color.Yellow)
+                    .clickable {
                         Log.d("DjY", "clicked yellow box")
+                        gotoWebViewCallback?.invoke("https://m.naver.com")
                     }
             ) {
                 Text("2021.11.12")
@@ -90,9 +103,11 @@ private fun mapViewItem(name: String) {
         val mapView1 = rememberMapViewWithLifecycle()
         AndroidView(
             { mapView1 },
-            modifier = Modifier.aspectRatio(1f).clickable {
-                Log.d("DjY", "clicked mapView")
-            }
+            modifier = Modifier
+                .aspectRatio(1f)
+                .clickable {
+                    Log.d("DjY", "clicked mapView")
+                }
         ) { mapView ->
             CoroutineScope(Dispatchers.Main).launch {
                 val map = mapView.awaitMap()
@@ -133,7 +148,8 @@ private fun mapViewItem(name: String) {
                 .background(Color(0f, 0f, 0f, 0.6f))
                 .fillMaxWidth()
                 .height(38.dp)
-                .padding(20.dp, 8.dp).clickable {
+                .padding(20.dp, 8.dp)
+                .clickable {
                     Log.d("DjY", "clicked textView")
                 },
             color = Color.White,
