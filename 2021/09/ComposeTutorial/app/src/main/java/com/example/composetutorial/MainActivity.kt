@@ -1,23 +1,22 @@
 package com.example.composetutorial
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
@@ -63,7 +62,9 @@ fun Greeting(name: String) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(360 / 335f)
-                    .background(Color.Yellow)
+                    .background(Color.Yellow).clickable {
+                        Log.d("DjY", "clicked yellow box")
+                    }
             ) {
                 Text("2021.11.12")
             }
@@ -89,7 +90,9 @@ private fun mapViewItem(name: String) {
         val mapView1 = rememberMapViewWithLifecycle()
         AndroidView(
             { mapView1 },
-            modifier = Modifier.aspectRatio(1f)
+            modifier = Modifier.aspectRatio(1f).clickable {
+                Log.d("DjY", "clicked mapView")
+            }
         ) { mapView ->
             CoroutineScope(Dispatchers.Main).launch {
                 val map = mapView.awaitMap()
@@ -122,7 +125,6 @@ private fun mapViewItem(name: String) {
                         destination
                     )
                 )
-
             }
         }
         Text(
@@ -131,7 +133,9 @@ private fun mapViewItem(name: String) {
                 .background(Color(0f, 0f, 0f, 0.6f))
                 .fillMaxWidth()
                 .height(38.dp)
-                .padding(20.dp, 8.dp),
+                .padding(20.dp, 8.dp).clickable {
+                    Log.d("DjY", "clicked textView")
+                },
             color = Color.White,
             fontSize = TextUnit(dpToSp(14.dp).value, TextUnitType.Sp),
             fontFamily = FontFamily.SansSerif,
