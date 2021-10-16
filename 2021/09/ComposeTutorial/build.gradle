@@ -3,6 +3,7 @@ buildscript {
     ext {
         kotlin_version = "1.5.31"
         compose_version = '1.0.4'
+        detekt_version = '1.18.1'
     }
     repositories {
         google()
@@ -14,6 +15,20 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+    }
+}
+
+plugins {
+    id "io.gitlab.arturbosch.detekt" version "$detekt_version"
+}
+
+allprojects {
+
+    detekt {
+        buildUponDefaultConfig = true // preconfigure defaults
+        allRules = false // activate all available (even unstable) rules.
+        source = files("src/main/java")
+        config = files("../detekt-config.yml")
     }
 }
 

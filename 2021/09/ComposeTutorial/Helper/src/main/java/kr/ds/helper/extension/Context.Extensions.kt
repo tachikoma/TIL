@@ -99,9 +99,9 @@ fun Context.resourceUri(@AnyRes resId: Int): Uri {
     return resources.let {
         Uri.Builder()
             .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-            .authority(it.getResourcePackageName(resId))		// it : resources, this : ResId(Int)
-            .appendPath(it.getResourceTypeName(resId))		// it : resources, this : ResId(Int)
-            .appendPath(it.getResourceEntryName(resId))		// it : resources, this : ResId(Int)
+            .authority(it.getResourcePackageName(resId))        // it : resources, this : ResId(Int)
+            .appendPath(it.getResourceTypeName(resId))        // it : resources, this : ResId(Int)
+            .appendPath(it.getResourceEntryName(resId))        // it : resources, this : ResId(Int)
             .build()
     }
 }
