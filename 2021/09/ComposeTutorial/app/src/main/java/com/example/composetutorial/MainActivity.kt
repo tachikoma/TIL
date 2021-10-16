@@ -9,18 +9,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.composetutorial.ui.theme.ComposeTutorialTheme
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.JointType
@@ -33,13 +39,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTutorialTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android") {
+                    MainScreen("Android") {
                         gotoWebView(it)
                     }
                 }
@@ -56,39 +63,98 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
-fun Greeting(name: String, gotoWebViewCallback: ((String) -> Unit)? = null) {
+fun MainScreen(name: String, gotoWebViewCallback: ((String) -> Unit)? = null) {
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-        item {
-            mapViewItem(name)
-        }
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(360 / 335f)
-                    .background(Color.Yellow)
-                    .clickable {
-                        Log.d("DjY", "clicked yellow box")
-                        gotoWebViewCallback?.invoke("https://m.naver.com")
-                    }
-            ) {
-                Text("2021.11.12")
+    ConstraintLayout() {
+        val (lazyColumn, box) = createRefs()
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(Color.White)
+                .constrainAs(lazyColumn) {
+                    top.linkTo(parent.top)
+                }
+        ) {
+            item {
+                mapViewItem(name)
+            }
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(360 / 335f)
+                        .background(Color.Yellow)
+                        .clickable {
+                            Log.d("DjY", "clicked yellow box")
+                            gotoWebViewCallback?.invoke("https://m.naver.com")
+                        }
+                ) {
+                    Text("2021.11.12")
+                }
+            }
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(360 / 120f)
+                        .background(Color.Cyan)
+                )
             }
         }
-        item {
-            Box(
-                modifier = Modifier
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(112.dp)
+                .background(Color.White)
+                .constrainAs(box) {
+                    bottom.linkTo(parent.bottom)
+                }
+        ) {
+            Row(
+                Modifier
                     .fillMaxWidth()
-                    .aspectRatio(360 / 120f)
-                    .background(Color.Cyan)
-            )
+                    .align(Alignment.Center), verticalAlignment = Alignment.CenterVertically
+            ) {
+                Card(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .padding(15.dp).clickable {
+
+                        },
+                    backgroundColor = Color(0xFFE6EBFF)
+                ) {
+                    Text(
+                        "내폰에 저장",
+                        color = Color.Blue,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.CenterVertically)
+                    )
+                }
+                Card(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .padding(15.dp).clickable {
+
+                        },
+                    backgroundColor = Color.Blue,
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            "공유",
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -160,12 +226,13 @@ private fun mapViewItem(name: String) {
     }
 }
 
+@ExperimentalComposeUiApi
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     ComposeTutorialTheme {
         Surface(color = MaterialTheme.colors.background) {
-            Greeting("Android")
+            MainScreen("Android")
         }
     }
 }
