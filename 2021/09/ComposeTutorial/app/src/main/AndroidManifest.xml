@@ -12,6 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ComposeTutorial">
         <activity
+            android:name=".chipgroup.ChipGroupActivity"
+            android:exported="false"
+            android:label="@string/title_activity_chip_group"
+            android:theme="@style/Theme.ComposeTutorial.NoActionBar" />
+        <activity
+            android:name=".chipgroup.ChipGroupMultiActivity"
+            android:exported="false"
+            android:label="@string/title_activity_chip_group_multi"
+            android:theme="@style/Theme.ComposeTutorial.NoActionBar" />
+        <activity
             android:name=".WebViewActivity"
             android:exported="true"
             android:label="@string/title_activity_web_view"

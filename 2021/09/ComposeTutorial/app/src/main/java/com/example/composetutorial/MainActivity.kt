@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.composetutorial.chipgroup.ChipGroupActivity
+import com.example.composetutorial.chipgroup.ChipGroupMultiActivity
 import com.example.composetutorial.ui.theme.ComposeTutorialTheme
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.JointType
@@ -39,6 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    @ExperimentalUnitApi
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +48,12 @@ class MainActivity : ComponentActivity() {
             ComposeTutorialTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    MainScreen("Android") {
+                    MainScreen("Android", {
                         gotoWebView(it)
+                    }, {
+                        gotoChipGroup()
+                    }) {
+                        gotoChipGroupMulti()
                     }
                 }
             }
@@ -61,13 +67,27 @@ class MainActivity : ComponentActivity() {
             }
         })
     }
+
+    private fun gotoChipGroup() {
+        startActivity(Intent(this, ChipGroupActivity::class.java))
+    }
+
+    private fun gotoChipGroupMulti() {
+        startActivity(Intent(this, ChipGroupMultiActivity::class.java))
+    }
 }
 
+@ExperimentalUnitApi
 @ExperimentalComposeUiApi
 @Composable
-fun MainScreen(name: String, gotoWebViewCallback: ((String) -> Unit)? = null) {
+fun MainScreen(
+    name: String,
+    gotoWebViewCallback: (String) -> Unit,
+    gotoChipGroupCallback: () -> Unit,
+    gotoChipGroupMultiCallback: () -> Unit
+) {
 
-    ConstraintLayout() {
+    ConstraintLayout {
         val (lazyColumn, box) = createRefs()
 
         LazyColumn(
@@ -83,26 +103,13 @@ fun MainScreen(name: String, gotoWebViewCallback: ((String) -> Unit)? = null) {
                 mapViewItem(name)
             }
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(360 / 335f)
-                        .background(Color.Yellow)
-                        .clickable {
-                            Log.d("DjY", "clicked yellow box")
-                            gotoWebViewCallback?.invoke("https://m.naver.com")
-                        }
-                ) {
-                    Text("2021.11.12")
-                }
+                YellowBox(gotoWebViewCallback)
             }
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(360 / 120f)
-                        .background(Color.Cyan)
-                )
+                CyanBox()
+            }
+            item {
+                Spacer(modifier = Modifier.height(112.dp))
             }
         }
         Box(
@@ -123,13 +130,14 @@ fun MainScreen(name: String, gotoWebViewCallback: ((String) -> Unit)? = null) {
                     Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .padding(15.dp).clickable {
-
+                        .padding(15.dp)
+                        .clickable {
+                            gotoChipGroupCallback.invoke()
                         },
                     backgroundColor = Color(0xFFE6EBFF)
                 ) {
                     Text(
-                        "내폰에 저장",
+                        "Chip Group - Single Selection",
                         color = Color.Blue,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -141,14 +149,15 @@ fun MainScreen(name: String, gotoWebViewCallback: ((String) -> Unit)? = null) {
                     Modifier
                         .weight(1f)
                         .fillMaxSize()
-                        .padding(15.dp).clickable {
-
+                        .padding(15.dp)
+                        .clickable {
+                            gotoChipGroupMultiCallback.invoke()
                         },
                     backgroundColor = Color.Blue,
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
-                            "공유",
+                            "Chip Group - Multi Selection",
                             color = Color.White,
                             textAlign = TextAlign.Center,
                         )
@@ -160,11 +169,39 @@ fun MainScreen(name: String, gotoWebViewCallback: ((String) -> Unit)? = null) {
 }
 
 @Composable
+@Preview(showBackground = true)
+private fun CyanBox() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(360 / 120f)
+            .background(Color.Cyan)
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun YellowBox(gotoWebViewCallback: (String) -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(360 / 335f)
+            .background(Color.Yellow)
+            .clickable {
+                Log.d("DjY", "clicked yellow box")
+                gotoWebViewCallback.invoke("https://m.naver.com")
+            }
+    ) {
+        Text("2021.11.12")
+    }
+}
+
+@Composable
 fun dpToSp(dp: Dp) = with(LocalDensity.current) { dp.toSp() }
 
-@OptIn(ExperimentalUnitApi::class)
+@ExperimentalUnitApi
 @Composable
-private fun mapViewItem(name: String) {
+internal fun mapViewItem(name: String) {
     Box {
         val mapView1 = rememberMapViewWithLifecycle()
         AndroidView(
@@ -223,16 +260,5 @@ private fun mapViewItem(name: String) {
             fontFamily = FontFamily.SansSerif,
             fontWeight = FontWeight.W500,
         )
-    }
-}
-
-@ExperimentalComposeUiApi
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    ComposeTutorialTheme {
-        Surface(color = MaterialTheme.colors.background) {
-            MainScreen("Android")
-        }
     }
 }

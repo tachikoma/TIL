@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">ComposeTutorial</string>
     <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="title_activity_chip_group">ChipGroupActivity</string>
+    <string name="title_activity_chip_group_multi">ChipGroupMultiActivity</string>
 </resources>
