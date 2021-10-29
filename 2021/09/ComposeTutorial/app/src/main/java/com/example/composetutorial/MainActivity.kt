@@ -25,7 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
 import com.example.composetutorial.chipgroup.ChipGroupActivity
 import com.example.composetutorial.chipgroup.ChipGroupMultiActivity
 import com.example.composetutorial.ui.theme.ComposeTutorialTheme
@@ -112,56 +114,68 @@ fun MainScreen(
                 Spacer(modifier = Modifier.height(112.dp))
             }
         }
-        Box(
+        BottomButtonBox(
+            gotoChipGroupCallback,
+            gotoChipGroupMultiCallback,
+            Modifier.constrainAs(box) {
+                bottom.linkTo(parent.bottom)
+            })
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BottomButtonBox(
+    gotoChipGroupCallback: () -> Unit,
+    gotoChipGroupMultiCallback: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(112.dp)
+            .background(Color.White)
+    ) {
+        Row(
             Modifier
                 .fillMaxWidth()
-                .height(112.dp)
-                .background(Color.White)
-                .constrainAs(box) {
-                    bottom.linkTo(parent.bottom)
-                }
+                .align(Alignment.Center), verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
+            Card(
                 Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center), verticalAlignment = Alignment.CenterVertically
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .padding(15.dp)
+                    .clickable {
+                        gotoChipGroupCallback.invoke()
+                    },
+                backgroundColor = Color(0xFFE6EBFF)
             ) {
-                Card(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .padding(15.dp)
-                        .clickable {
-                            gotoChipGroupCallback.invoke()
-                        },
-                    backgroundColor = Color(0xFFE6EBFF)
-                ) {
-                    Text(
-                        "Chip Group - Single Selection",
-                        color = Color.Blue,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .align(Alignment.CenterVertically)
-                    )
-                }
-                Card(
-                    Modifier
-                        .weight(1f)
+                Text(
+                    "Chip Group - Single Selection",
+                    color = Color.Blue,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
                         .fillMaxSize()
-                        .padding(15.dp)
-                        .clickable {
-                            gotoChipGroupMultiCallback.invoke()
-                        },
-                    backgroundColor = Color.Blue,
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            "Chip Group - Multi Selection",
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                        .align(Alignment.CenterVertically)
+                )
+            }
+            Card(
+                Modifier
+                    .weight(1f)
+                    .fillMaxSize()
+                    .padding(15.dp)
+                    .clickable {
+                        gotoChipGroupMultiCallback.invoke()
+                    },
+                backgroundColor = Color.Blue,
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        "Chip Group - Multi Selection",
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                    )
                 }
             }
         }
