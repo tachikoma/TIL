@@ -1,9 +1,9 @@
 package kr.ds.helper.util
 
 import android.content.pm.PackageManager
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import timber.log.Timber
 
@@ -14,7 +14,7 @@ typealias PermissionGrantedCallback = (() -> Unit)
 typealias PermissionDeniedCallback = ((Boolean) -> Unit)
 typealias MultiplePermissionDeniedCallback = ((Array<String>) -> Unit)
 
-class PermissionGrantHelper(private val activity: AppCompatActivity) {
+class PermissionGrantHelper(private val activity: ComponentActivity) {
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         activity.registerForActivityResult(

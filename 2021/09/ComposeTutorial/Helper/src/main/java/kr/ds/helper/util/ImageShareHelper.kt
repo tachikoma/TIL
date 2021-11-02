@@ -13,7 +13,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
@@ -24,7 +24,23 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
-class ImageShareHelper(private val activity: AppCompatActivity) {
+/**
+ * 이미지 저장 및 공유
+ *
+ * ### Library 에 추가 되어 있지만 안되면 app 레벨 AndroidManifest.xml 에 아래 코드 추가 필요
+ *
+<provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/filepaths" />
+</provider>
+ *
+ */
+class ImageShareHelper(private val activity: ComponentActivity) {
 
     private val permissionGrantHelper: PermissionGrantHelper = PermissionGrantHelper(activity)
     private val deleteCacheFileHelper = DeleteCacheFileHelper(activity.lifecycle)

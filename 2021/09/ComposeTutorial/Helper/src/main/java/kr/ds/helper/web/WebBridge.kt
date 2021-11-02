@@ -1,6 +1,5 @@
 package kr.ds.helper.web
 
-import android.content.Context
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
 import androidx.annotation.MainThread
@@ -11,7 +10,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.net.URLDecoder
 
-abstract class WebBridge(private val context: Context) {
+abstract class WebBridge {
 
     companion object {
         const val DEFAULT_WEB_BRIDGE_NAME = "androidWebBridge"

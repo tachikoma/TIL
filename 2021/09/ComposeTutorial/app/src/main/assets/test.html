@@ -1,0 +1,211 @@
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        var isMobile = {
+            Android: function () {
+                return navigator.userAgent.match(/Android/i) == null ? false : true;
+            },
+            iOS: function () {
+                return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
+            },
+            any: function () {
+                return (isMobile.Android() || isMobile.iOS());
+            }
+        };
+
+        function callNative(obj) {
+            if (isMobile.Android()) {
+                window.androidWebBridge.postMessage(JSON.stringify(obj));
+            } else if (isMobile.iOS()) {
+                webkit.messageHandlers.iOSInterface.postMessage(obj);
+            }
+            else {
+                alert('지원되지 않는 OS입니다.')
+            }
+        }
+
+        function snsLoginPop(type) {
+            var dict = {}
+            dict["group"] = "login"
+            dict["function"] = "snsLogin"
+
+            if (type == "google") {
+                var args = {}
+                args['type'] = type;
+                dict["args"] = args
+                console.log(dict)
+                callNative(dict);
+            }
+            else if (type == "Apple") {
+                var args = {}
+                args['type'] = type;
+                dict["args"] = args
+                console.log(dict)
+                callNative(dict);
+            }
+            else {
+                alert('앱에서 지원하지 않습니다.');
+            }
+        }
+
+        function saveImage() {
+            var dict = {}, args = {}
+
+            dict['group'] = "image"
+            dict["function"] = "save"
+
+            args["imgUrl"] = "https://unsplash.com/photos/RNfrfBDxh1k/download?ixid=MnwxMjA3fDB8MXxhbGx8Mnx8fHx8fDJ8fDE2MzU4NDU0NTk&force=true"
+            dict["args"] = args
+
+            callNative(dict);
+        }
+
+        function shareImage() {
+            var dict = {}, args = {}
+
+            dict['group'] = "image"
+            dict["function"] = "share"
+
+            args["imgUrl"] = "https://unsplash.com/photos/RNfrfBDxh1k/download?ixid=MnwxMjA3fDB8MXxhbGx8Mnx8fHx8fDJ8fDE2MzU4NDU0NTk&force=true"
+            dict["args"] = args
+
+            callNative(dict);
+        }
+
+        function changeAgreeUseLocation(yesNo) {
+            var dict = {}, args = {}
+
+            dict['group'] = "setting"
+            dict["function"] = "onoff"
+
+            args["agreement"] = yesNo
+            dict["args"] = args
+
+            callNative(dict);
+        }
+
+        function agreeUseLocation() {
+            var dict = {}, args = {}
+
+            dict['group'] = "agreement"
+            dict["function"] = "location"
+
+            args["callback"] = "locationAgree"
+            dict["args"] = args
+
+            callNative(dict);
+        }
+
+        function showCameraTest() {
+            var dict = {}, args = {}
+
+            dict['group'] = "show"
+            dict["function"] = "camera"
+
+            dict["args"] = args
+
+            callNative(dict);
+        }
+    </script>
+</head>
+<body>
+<P>
+    <a href="https://postcode.map.daum.net/guide">주소 찾기(링크)</a>
+</P>
+<P>
+    <a href="https://m.daum.net" target="_blank">새 창 테스트</a>
+</P>
+<P>
+    <a href="composetutorial://https://m.daum.net">빈 host ? 없음, 바로 url 시작(사실상 https) 테스트</a>
+</P>
+<P>
+    <a href="composetutorial://?https://m.daum.net">빈 host (파라미터만 있음) 테스트</a>
+</P>
+<P>
+    <a href="composetutorial://://https://m.daum.net">: host 테스트</a>
+</P>
+<P>
+    <a href="javascript:saveImage()">이미지 저장</a>
+</P>
+<P>
+    <a href="javascript:shareImage()">이미지 공유</a>
+</P>
+<P>
+    <a href="javascript:showCameraTest()">촬영하기 호출</a>
+</P>
+<div>
+    <label>type="file"</label>
+    <input type="file"/>
+</div>
+<p>
+<div>
+    <label>type="file" accept="*/*"</label>
+    <input type="file" accept="*/*"/>
+</div>
+<p>
+<div>
+    <label for="uploadImg">type="file" accept="image/*"</label>
+    <input type="file" id="uploadImg" accept="image/*"/>
+</div>
+<p>
+<div>
+    <label for="capture">type="file" accept="image/*" capture="user"</label>
+    <input type="file" id="capture" accept="image/*" capture="user"/>
+</div>
+<p>
+<div>
+    <label for="uploadfile1">type="file"
+        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"</label>
+    <input type="file" id="uploadfile1"
+           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+</div>
+<p>
+<div>
+    <label for="uploadfile2">type="file" id="uploadfile2" name="uploadfile" data-index="1"
+        title="사진첨부2"
+        accept="image/*,video/*"</label>
+    <input type="file" id="uploadfile2" name="uploadfile" data-index="1" title="사진첨부2"
+           accept="image/*,video/*">
+</div>
+<p>
+<div>
+    <label for="uploadfile3">type="file" id="uploadfile3" name="uploadfile" data-index="1"
+        title="사진첨부3"
+        accept="image/*,video/*" capture="user"</label>
+    <input type="file" id="uploadfile3" name="uploadfile" data-index="1" title="사진첨부3"
+           accept="image/*,video/*" capture="user">
+</div>
+<p>
+<div>
+    <label for="uploadfile4">type="file" id="uploadfile4" name="uploadfile" data-index="1"
+        title="사진첨부4"
+        accept="image/*;capture=camera,video/*;capture=camcorder"</label>
+    <input type="file" id="uploadfile4" name="uploadfile" data-index="1" title="사진첨부4"
+           accept="image/*;capture=camera,video/*;capture=camcorder">
+</div>
+<p>
+<div>
+    <label for="uploadfile5">type="file" id="uploadfile111" name="uploadfile" data-index="1"
+        title="사진첨부5"
+        accept="image/*;capture=camera,video/*;capture=camcorder" capture="camera"</label>
+    <input type="file" id="uploadfile5" name="uploadfile" data-index="1" title="사진첨부5"
+           accept="image/*;capture=camera,video/*;capture=camcorder" capture="camera">
+</div>
+<p>
+    <label for="soundFile">What does your voice sound like?:</label>
+    <input type="file" id="soundFile" capture="user" accept="audio/*">
+</p>
+<p>
+    <label for="videoFile">Upload a video:</label>
+    <input type="file" id="videoFile" capture="environment" accept="video/*">
+</p>
+<p>
+    <label for="imageFile">Upload a photo of yourself:</label>
+    <input type="file" id="imageFile" capture="user" accept="image/*">
+</p>
+</body>
+</html>

@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                     }, {
                         googleSignInHelper.getIdToken()
                     }, {
-
+                        gotoWebView(null)
                     })
                 }
             }
