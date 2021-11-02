@@ -11,7 +11,7 @@ class InterceptTouchMapView : MapView {
     @kotlin.jvm.JvmOverloads
     constructor(
         context: Context,
-        attrs: AttributeSet? = null,
+        attrs: AttributeSet,
         defStyle: Int = 0
     ) : super(context, attrs, defStyle)
 

@@ -3,9 +3,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter() // Warning: this repository is going to shut down soon
     }
 }
 rootProject.name = "ComposeTutorial"
 include ':app'
 include ':Helper'
+include ':GoogleSignIn'

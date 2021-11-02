@@ -8,6 +8,7 @@ import android.os.Build
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import androidx.annotation.RequiresApi
 import timber.log.Timber
 import java.net.URISyntaxException
 
@@ -122,6 +123,7 @@ interface IDefaultWebViewClientStrategy : IWebViewClientStrategy {
         return str
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun handleReceivedError(
         view: WebView?,
         request: WebResourceRequest?,

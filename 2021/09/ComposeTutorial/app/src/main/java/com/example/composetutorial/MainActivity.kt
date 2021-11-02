@@ -1,8 +1,10 @@
 package com.example.composetutorial
 
 import android.content.Intent
+import android.icu.text.UnicodeSetIterator
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -25,9 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
 import com.example.composetutorial.chipgroup.ChipGroupActivity
 import com.example.composetutorial.chipgroup.ChipGroupMultiActivity
 import com.example.composetutorial.ui.theme.ComposeTutorialTheme
@@ -36,10 +36,13 @@ import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.firebase.FirebaseApp
 import com.google.maps.android.ktx.awaitMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kr.ds.googlesignin.GoogleSignInHelper
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     @ExperimentalUnitApi
@@ -50,15 +53,27 @@ class MainActivity : ComponentActivity() {
             ComposeTutorialTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    MainScreen("Android", {
+                    MainScreen("Google Sign-In Test", {
                         gotoWebView(it)
                     }, {
                         gotoChipGroup()
-                    }) {
+                    }, {
                         gotoChipGroupMulti()
-                    }
+                    }, {
+                        googleSignInHelper.getIdToken()
+                    }, {
+
+                    })
                 }
             }
+        }
+
+        googleSignInHelper.prepareGoogleSignIn(getString(R.string.client_id))
+    }
+
+    private val googleSignInHelper by lazy {
+        GoogleSignInHelper(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -86,7 +101,9 @@ fun MainScreen(
     name: String,
     gotoWebViewCallback: (String) -> Unit,
     gotoChipGroupCallback: () -> Unit,
-    gotoChipGroupMultiCallback: () -> Unit
+    gotoChipGroupMultiCallback: () -> Unit,
+    googleSignCallback: () -> Unit,
+    testWebViewCallback: () -> Unit,
 ) {
 
     ConstraintLayout {
@@ -102,13 +119,13 @@ fun MainScreen(
                 }
         ) {
             item {
-                mapViewItem(name)
+                MapViewItem(name, googleSignCallback)
             }
             item {
                 YellowBox(gotoWebViewCallback)
             }
             item {
-                CyanBox()
+                CyanBox(testWebViewCallback)
             }
             item {
                 Spacer(modifier = Modifier.height(112.dp))
@@ -184,13 +201,19 @@ private fun BottomButtonBox(
 
 @Composable
 @Preview(showBackground = true)
-private fun CyanBox() {
+private fun CyanBox(testWebViewCallback: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(360 / 120f)
             .background(Color.Cyan)
-    )
+            .clickable {
+                Timber.d("clicked cyan box")
+                testWebViewCallback.invoke()
+            }
+    ) {
+        Text("Open Test Web")
+    }
 }
 
 @Composable
@@ -202,11 +225,11 @@ private fun YellowBox(gotoWebViewCallback: (String) -> Unit) {
             .aspectRatio(360 / 335f)
             .background(Color.Yellow)
             .clickable {
-                Log.d("DjY", "clicked yellow box")
+                Timber.d("clicked yellow box")
                 gotoWebViewCallback.invoke("https://m.naver.com")
             }
     ) {
-        Text("2021.11.12")
+        Text("Open Web")
     }
 }
 
@@ -215,7 +238,7 @@ fun dpToSp(dp: Dp) = with(LocalDensity.current) { dp.toSp() }
 
 @ExperimentalUnitApi
 @Composable
-internal fun mapViewItem(name: String) {
+internal fun MapViewItem(name: String, googleSignCallback: () -> Unit) {
     Box {
         val mapView1 = rememberMapViewWithLifecycle()
         AndroidView(
@@ -223,7 +246,7 @@ internal fun mapViewItem(name: String) {
             modifier = Modifier
                 .aspectRatio(1f)
                 .clickable {
-                    Log.d("DjY", "clicked mapView")
+                    Timber.d("clicked mapView")
                 }
         ) { mapView ->
             CoroutineScope(Dispatchers.Main).launch {
@@ -267,7 +290,8 @@ internal fun mapViewItem(name: String) {
                 .height(38.dp)
                 .padding(20.dp, 8.dp)
                 .clickable {
-                    Log.d("DjY", "clicked textView")
+                    Timber.d("clicked textView")
+                    googleSignCallback.invoke()
                 },
             color = Color.White,
             fontSize = TextUnit(dpToSp(14.dp).value, TextUnitType.Sp),

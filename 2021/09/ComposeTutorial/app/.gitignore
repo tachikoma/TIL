@@ -1,2 +1,4 @@
 /build
 /src/main/res/values/google_maps_api.xml
+/src/main/res/values/google_sign_client.xml
+/google-services.json
