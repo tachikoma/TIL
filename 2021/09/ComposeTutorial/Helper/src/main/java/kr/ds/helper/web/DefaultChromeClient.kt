@@ -17,22 +17,6 @@ open class DefaultChromeClient(activity: Activity) : BaseChromeClient(activity) 
 
     private val fileChooseHelper = FileChooseHelper(targetActivity as ComponentActivity)
 
-    // [start WebView File Chooser]
-    /**
-     * For 4.1 <= Android Version < 5.0
-     * @param uriValueCallback
-     * @param acceptType
-     * @param capture
-     */
-    fun openFileChooser(
-        uriValueCallback: ValueCallback<Uri?>?,
-        acceptType: String,
-        capture: String
-    ) {
-        Timber.d("openFileChooser : $acceptType/$capture")
-        fileChooseHelper.runImageChooser(uriValueCallback, acceptType, capture)
-    }
-
     /**
      * For Android Version 5.0+
      * @param webView
@@ -49,8 +33,5 @@ open class DefaultChromeClient(activity: Activity) : BaseChromeClient(activity) 
         )
         fileChooseHelper.runFileChooser(filePathCallback, fileChooserParams)
         return true
-    } // [end WebView File Chooser]
-
-    companion object {
     }
 }

@@ -33,7 +33,4 @@ open class BaseChromeClient
             .create().show()
         return true
     }
-
-    companion object {
-    }
 }

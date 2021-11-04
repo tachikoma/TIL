@@ -2,7 +2,6 @@ package kr.ds.helper.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.vinylc.runable.util.PrefUtil
 
 /**
  * SharedPreferences Read & Write Util

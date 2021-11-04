@@ -1,71 +1,44 @@
 package kr.ds.helper.web
 
-import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
-import android.provider.Settings
 import android.text.TextUtils
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import timber.log.Timber
 import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 class FileChooseHelper(private val activity: ComponentActivity) {
     private var cameraImageUri: Uri? = null
-    private var mCameraPhotoPath: String? = null
     private var cameraVideoUri: Uri? = null
-    private var mCameraVideoPath: String? = null
+
     private var filePathCallbackLollipop: ValueCallback<Array<Uri?>?>? = null
-    private var filePathCallbackOldFashion: ValueCallback<Uri?>? = null
 
     val isOnWorking: Boolean
-        get() = null != filePathCallbackLollipop || null != filePathCallbackOldFashion
+        get() = null != filePathCallbackLollipop
 
     private val requestActivityLauncher = activity.registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Timber.d("lollipop or more. data ${it.data}")
-            if (Activity.RESULT_OK == it.resultCode) {
-                if (null != filePathCallbackLollipop) {
-                    val results = arrayOf(getResultUri(it.data))
-                    filePathCallbackLollipop!!.onReceiveValue(results)
-                    filePathCallbackLollipop = null
-                }
-            } else {
-                if (null != filePathCallbackLollipop) {
-                    filePathCallbackLollipop!!.onReceiveValue(null)
-                    filePathCallbackLollipop = null
-                }
+        Timber.d("lollipop or more. data ${it.data}")
+        if (Activity.RESULT_OK == it.resultCode) {
+            if (null != filePathCallbackLollipop) {
+                val resultUri = getResultUri(it.data)
+                val results: Array<Uri?>? = resultUri?.let { arrayOf(resultUri) }
+                filePathCallbackLollipop!!.onReceiveValue(results)
+                filePathCallbackLollipop = null
             }
         } else {
-            Timber.d("old fashion data ${it.data}")
-            if (Activity.RESULT_OK == it.resultCode) {
-                if (null != filePathCallbackOldFashion) {
-                    val result = getResultUri(it.data)
-                    filePathCallbackOldFashion!!.onReceiveValue(result)
-                    filePathCallbackOldFashion = null
-                }
-            } else {
-                if (null != filePathCallbackOldFashion) {
-                    filePathCallbackOldFashion!!.onReceiveValue(null)
-                    filePathCallbackOldFashion = null
-                }
+            if (null != filePathCallbackLollipop) {
+                filePathCallbackLollipop!!.onReceiveValue(null)
+                filePathCallbackLollipop = null
             }
         }
     }
@@ -81,12 +54,6 @@ class FileChooseHelper(private val activity: ComponentActivity) {
         var result: Uri? = null
         if (data == null || TextUtils.isEmpty(data.dataString)) {
             // If there is not data, then we may have taken a photo
-            if (mCameraPhotoPath != null) {
-                result = Uri.parse(mCameraPhotoPath)
-            }
-            if (mCameraVideoPath != null) {
-                result = Uri.parse(mCameraVideoPath)
-            }
             if (null != cameraImageUri) {
                 result = cameraImageUri
             }
@@ -98,132 +65,6 @@ class FileChooseHelper(private val activity: ComponentActivity) {
             result = Uri.parse(filePath)
         }
         return result
-    }
-
-    private val requestPermissionLauncher = activity.registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) {  grantResults ->
-        var isAllGranted = true
-        if (grantResults.isNotEmpty()) {
-            for (value in grantResults.values) {
-                if (!value) {
-                    isAllGranted = false
-                }
-            }
-        }
-        if (isAllGranted) {
-            gotoCameraAvailable()
-        } else {
-            showPermissionPopup(grantResults.keys.toTypedArray())
-            if (null != filePathCallbackLollipop) {
-                filePathCallbackLollipop!!.onReceiveValue(null)
-                filePathCallbackLollipop = null
-            }
-        }
-    }
-
-    private fun showPermissionPopup(permissions: Array<out String>) {
-        val context = activity
-
-        if (permissions.isNullOrEmpty()) return
-
-        val shouldShowRequestPermissionRationaleCamera =
-            shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)
-
-        var requiredPermissions = ""
-        permissions.forEach {
-            val isEmptyPermission = requiredPermissions.isEmpty()
-            requiredPermissions += when (it) {
-                Manifest.permission.CAMERA -> {
-                    val string = Manifest.permission.CAMERA
-                    if (isEmptyPermission) string else ", $string"
-                }
-                else -> ""
-            }
-        }
-
-        if (requiredPermissions.isEmpty()) return
-
-        Timber.d("PermissionRationale camera:$shouldShowRequestPermissionRationaleCamera")
-    }
-
-    private fun gotoAppSettings(context: Context) {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        val uri: Uri = Uri.fromParts("package", context.packageName, null)
-        intent.data = uri
-        context.startActivity(intent)
-    }
-
-    var savedFileChooserParams: FileChooserParams? = null
-    private fun gotoCameraAvailable() {
-        runChooser(savedFileChooserParams)
-    }
-
-    fun runImageChooser(
-        uriValueCallback: ValueCallback<Uri?>?,
-        acceptType: String,
-        capture: String
-    ) {
-        setFilePathCallbackOldFashion(uriValueCallback)
-        imageChooser(acceptType, capture)
-    }
-
-    private fun imageChooser(acceptType: String, capture: String) {
-        var takePictureIntent: Intent? = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent!!.resolveActivity(activity.packageManager) != null) {
-            // Create the File where the photo should go
-            var photoFile: File? = null
-            try {
-                photoFile = createImageFile()
-                takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath)
-            } catch (ex: IOException) {
-                // Error occurred while creating the File
-                Timber.e(ex, "Unable to create Image File")
-            }
-
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                mCameraPhotoPath = "file:" + photoFile.absolutePath
-                takePictureIntent.putExtra(
-                    MediaStore.EXTRA_OUTPUT,
-                    Uri.fromFile(photoFile)
-                )
-            } else {
-                takePictureIntent = null
-            }
-        }
-        val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
-        contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
-        contentSelectionIntent.type = acceptType
-        val intentArray: Array<Intent?> = takePictureIntent?.let { arrayOf(it) } ?: arrayOfNulls(0)
-        val chooserIntent = Intent(Intent.ACTION_CHOOSER)
-        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-        chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
-        requestActivityLauncher.launch(chooserIntent)
-    }
-
-    @Throws(IOException::class)
-    private fun createImageFile(): File {
-        // Create an image file name
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
-        val storageDir =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            imageFileName,  /* prefix */
-            ".jpg",  /* suffix */
-            storageDir /* directory */
-        )
-    }
-
-    private fun setFilePathCallbackOldFashion(filePathCallbackOldFashion: ValueCallback<Uri?>?) {
-        if (null != this.filePathCallbackOldFashion) {
-            this.filePathCallbackOldFashion!!.onReceiveValue(null)
-            this.filePathCallbackOldFashion = null
-        }
-        this.filePathCallbackOldFashion = filePathCallbackOldFashion
     }
 
     private fun setFilePathCallbackLollipop(filePathCallbackLollipop: ValueCallback<Array<Uri?>?>?) {
@@ -242,11 +83,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
             """acceptTypes:${fileChooserParams?.acceptTypes.contentToString()}, isCaptureEnabled:${fileChooserParams?.isCaptureEnabled}, mode:${fileChooserParams?.mode}, title:${fileChooserParams?.title}, fileHint:${fileChooserParams?.filenameHint} """
         )
         setFilePathCallbackLollipop(filePathCallbackLollipop)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkPermissionAndRunChooser(fileChooserParams!!)
-        } else {
-            runChooser(fileChooserParams)
-        }
+        runChooser(fileChooserParams)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -262,7 +99,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
                             imageCaptureIntent(),
                             videoCaptureIntent(),
                             audioCaptureIntent()
-                        )
+                        ).filterNotNull().toTypedArray()
                     )
                 }
                 if (shouldUseCaptureForAllTypes && 1 == fileChooserParams.acceptTypes.count { type -> type == "*/*" }) {
@@ -272,7 +109,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
                             imageCaptureIntent(),
                             videoCaptureIntent(),
                             audioCaptureIntent()
-                        )
+                        ).filterNotNull().toTypedArray()
                     )
                 }
                 requestActivityLauncher.launch(chooserIntent)
@@ -296,7 +133,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
         }
     }
 
-    private fun arrayOfCaptureIntents(fileChooserParams: FileChooserParams): Array<Intent?> {
+    private fun arrayOfCaptureIntents(fileChooserParams: FileChooserParams): Array<Intent> {
         var intentArray: Array<Intent?> = arrayOfNulls(0)
 
         if (0 == fileChooserParams.acceptTypes.count { types -> types.isNotBlank() }) {
@@ -319,7 +156,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
                 intentArray = intentArray.plus(audioCaptureIntent())
             }
         }
-        return intentArray
+        return intentArray.filterNotNull().toTypedArray()
     }
 
     private fun chooserIntent(fileChooserParams: FileChooserParams): Intent {
@@ -343,7 +180,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
             } else {
                 tempPath.listFiles { pathname ->
                     pathname?.isFile == true && pathname.absolutePath.contains(
-                        "fokCamera_",
+                        Companion.PREFIX,
                         true
                     )
                 }?.forEach { file ->
@@ -352,7 +189,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
                     }
                 }
             }
-            val file = File(tempPath, "fokCamera_" + System.currentTimeMillis() + ".jpg")
+            val file = File(tempPath, Companion.PREFIX + System.currentTimeMillis() + ".jpg")
             // File 객체의 URI 를 얻는다.
             cameraImageUri = FileProvider.getUriForFile(
                 activity,
@@ -378,7 +215,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
             } else {
                 tempPath.listFiles { pathname ->
                     pathname?.isFile == true && pathname.absolutePath.contains(
-                        "fokCamera_",
+                        Companion.PREFIX,
                         true
                     )
                 }?.forEach { file ->
@@ -387,7 +224,7 @@ class FileChooseHelper(private val activity: ComponentActivity) {
                     }
                 }
             }
-            val file = File(tempPath, "fokCamera_" + System.currentTimeMillis() + ".mp4")
+            val file = File(tempPath, Companion.PREFIX + System.currentTimeMillis() + ".mp4")
             // File 객체의 URI 를 얻는다.
             cameraVideoUri = FileProvider.getUriForFile(
                 activity,
@@ -402,28 +239,13 @@ class FileChooseHelper(private val activity: ComponentActivity) {
     }
 
     private fun audioCaptureIntent(): Intent? {
+        // NOTE: Sound recorder does not support EXTRA_OUTPUT
+        // TODO: 삼성폰에서는 결과가 리턴된다. (LG폰은 안되었음)
         val intentRecordSound = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
         return if (intentRecordSound.resolveActivity(activity.packageManager) != null) {
             intentRecordSound
         } else {
             null
-        }
-    }
-
-    private fun checkPermissionAndRunChooser(fileChooserParams: FileChooserParams) {
-        if (fileChooserParams.isCaptureEnabled) {
-            val grantedCamera = ContextCompat.checkSelfPermission(
-                activity,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-            savedFileChooserParams = fileChooserParams
-            if (grantedCamera) {
-                gotoCameraAvailable()
-            } else {
-                requestPermissionLauncher.launch(arrayOf(Manifest.permission.CAMERA))
-            }
-        } else {
-            runChooser(fileChooserParams)
         }
     }
 
@@ -438,5 +260,6 @@ class FileChooseHelper(private val activity: ComponentActivity) {
          * 캡쳐가 껴져 있지만 타입 정의가 All(*\/\*) 일 경우 캡쳐 포함 여부
          */
         private const val shouldUseCaptureForAllTypes = false
+        private const val PREFIX = "Camera_"
     }
 }

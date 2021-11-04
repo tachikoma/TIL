@@ -1,4 +1,4 @@
-package com.vinylc.runable.util
+package kr.ds.helper.util
 
 import android.content.Context
 import android.content.SharedPreferences
