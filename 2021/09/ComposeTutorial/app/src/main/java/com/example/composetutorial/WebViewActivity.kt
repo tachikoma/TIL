@@ -28,8 +28,6 @@ class WebViewActivity : ComponentActivity() {
 
         val url = intent.getStringExtra("EXTRA_URL")
 
-        UserAgentManager.genUserAgent(this, packageName.substringAfter('.'), appVersion)
-
         makeWebBridge()
 
         setContent {
@@ -107,12 +105,13 @@ class WebViewActivity : ComponentActivity() {
             }
 
             override fun isDefineError(errorCode: Int): Boolean {
-                return false
+                return webViewErrorHelper.isDefinedError(errorCode)
             }
 
             override fun showError(view: WebView?, errMsg: String) {
             }
 
+            private val webViewErrorHelper = DefaultWebViewErrorHelper()
         })
 
     private val webBridge = DefaultWebBridge()

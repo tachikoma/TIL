@@ -7,7 +7,9 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
+import kr.ds.helper.extension.appVersion
 import kr.ds.helper.util.printSignKeySHA
+import kr.ds.helper.web.UserAgentManager
 import timber.log.Timber
 
 class App : Application() {
@@ -19,8 +21,16 @@ class App : Application() {
         // 다크 모드 막음
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        setupTimber()
+        UserAgentManager.genUserAgent(this, packageName.substringAfter('.'), appVersion)
 
+        setupLogTimber()
+
+        Timber.d("App Started")
+
+        printSignKeySHA()
+    }
+
+    private fun setupLogTimber() {
         val formatStrategy: FormatStrategy = PrettyFormatStrategy.newBuilder()
             .showThreadInfo(true) // (Optional) Whether to show thread info or not. Default true
             .methodCount(1) // (Optional) How many method line to show. Default 2
@@ -34,12 +44,6 @@ class App : Application() {
             }
         })
 
-        Timber.d("App Started")
-
-        printSignKeySHA()
-    }
-
-    private fun setupTimber() {
         if (BuildConfig.DEBUG) {
             Timber.plant(object : Timber.DebugTree() {
                 override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
