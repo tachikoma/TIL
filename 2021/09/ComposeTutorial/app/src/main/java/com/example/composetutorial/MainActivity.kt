@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.composetutorial.chipgroup.ChipGroupActivity
 import com.example.composetutorial.chipgroup.ChipGroupMultiActivity
 import com.example.composetutorial.ui.theme.ComposeTutorialTheme
@@ -49,6 +50,12 @@ class MainActivity : ComponentActivity() {
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val splashWasDisplayed = savedInstanceState != null
+        if (!splashWasDisplayed) {
+            installSplashScreen()
+        } else {
+            setTheme(R.style.Theme_AppSplash)
+        }
         setContent {
             ComposeTutorialTheme {
                 // A surface container using the 'background' color from the theme
@@ -217,7 +224,7 @@ private fun CyanBox(testWebViewCallback: () -> Unit) {
 }
 
 @Composable
-@Preview(showBackground = true)
+@Preview
 private fun YellowBox(gotoWebViewCallback: (String) -> Unit) {
     Box(
         modifier = Modifier
