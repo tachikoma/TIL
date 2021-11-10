@@ -4,19 +4,16 @@ import android.app.Activity
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.viewinterop.AndroidView
 import com.example.composetutorial.ui.theme.ComposeTutorialTheme
 import com.example.composetutorial.webbridge.ImageHandler
 import com.example.composetutorial.webbridge.ShowHandler
-import kotlinx.coroutines.launch
-import kr.ds.helper.extension.appVersion
 import kr.ds.helper.extension.readStringFromAsset
 import kr.ds.helper.util.ImageShareHelper
 import kr.ds.helper.web.*
@@ -28,7 +25,15 @@ class WebViewActivity : ComponentActivity() {
 
         val url = intent.getStringExtra("EXTRA_URL")
 
-        makeWebBridge()
+        addWebBridgeHandlers()
+
+        val onBack: (WebView?) -> Unit = { webView ->
+            if (true == webView?.canGoBack()) {
+                webView.goBack()
+            } else {
+                finish()
+            }
+        }
 
         setContent {
             ComposeTutorialTheme {
@@ -39,27 +44,15 @@ class WebViewActivity : ComponentActivity() {
                             it,
                             defaultWebViewClient,
                             defaultChromeClient,
-                            webBridge
-                        ) { webView ->
-                            if (true == webView?.canGoBack()) {
-                                webView.goBack()
-                            } else {
-                                finish()
-                            }
-                        }
+                            webBridge, onBack
+                        )
                     } ?: run {
                         RootScreenData(
                             readStringFromAsset("test.html"),
                             defaultWebViewClient,
                             defaultChromeClient,
-                            webBridge
-                        ) { webView ->
-                            if (true == webView?.canGoBack()) {
-                                webView.goBack()
-                            } else {
-                                finish()
-                            }
-                        }
+                            webBridge, onBack
+                        )
                     }
                 }
             }
@@ -68,7 +61,7 @@ class WebViewActivity : ComponentActivity() {
 
     private val imageShareHelper = ImageShareHelper(this)
 
-    private fun makeWebBridge() {
+    private fun addWebBridgeHandlers() {
         webBridge.also {
             it.addInterface("image", object : ImageHandler {
                 override fun save(args: WebMessageArgs?) {
@@ -79,6 +72,7 @@ class WebViewActivity : ComponentActivity() {
                     }, {
                     })
                 }
+
                 override fun share(args: WebMessageArgs?) {
                     val imgUrl = args?.get("imgUrl") as String
                     Timber.d("url = $imgUrl")
@@ -125,7 +119,7 @@ fun RootScreenUrl(
     webBridge: WebBridge? = null,
     onBack: ((WebView?) -> Unit)? = null,
 ) {
-    WebViewScreen({
+    WebViewScreen(modifier = Modifier.fillMaxHeight(), onInit = {
         it.loadUrl(url)
     }, defaultWebViewClient, defaultWebChromeClient, webBridge, onBack)
 }
@@ -138,42 +132,9 @@ fun RootScreenData(
     webBridge: WebBridge? = null,
     onBack: ((WebView?) -> Unit)? = null,
 ) {
-    WebViewScreen({
+    WebViewScreen(modifier = Modifier.fillMaxHeight(), onInit = {
         it.loadData(data, "text/html", "UTF-8")
     }, defaultWebViewClient, defaultWebChromeClient, webBridge, onBack)
-}
-
-@Composable
-fun WebViewScreen(
-    onInit: (WebView) -> Unit,
-    defaultWebViewClient: BaseWebViewClient? = null,
-    defaultWebChromeClient: DefaultChromeClient? = null,
-    webBridge: WebBridge? = null,
-    onBack: ((WebView?) -> Unit)? = null,
-) {
-    var webView: WebView? = null
-    val coroutineScope = rememberCoroutineScope()
-    AndroidView({ context ->
-        WebView(context).apply {
-            initWebView()
-            defaultWebChromeClient?.let {
-                webChromeClient = it
-            }
-            defaultWebViewClient?.let {
-                webViewClient = it
-            }
-            webBridge?.let {
-                addWebViewBridge(it)
-            }
-            webView = this
-            onInit(this)
-        }
-    })
-    BackHandler {
-        coroutineScope.launch {
-            onBack?.invoke(webView)
-        }
-    }
 }
 
 
