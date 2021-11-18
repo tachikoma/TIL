@@ -1,9 +1,7 @@
 package com.example.composetutorial
 
 import android.content.Intent
-import android.icu.text.UnicodeSetIterator
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,11 +34,11 @@ import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.firebase.FirebaseApp
 import com.google.maps.android.ktx.awaitMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.example.composetutorial.util.ScaleAwareSp
 import kr.ds.googlesignin.GoogleSignInHelper
 import timber.log.Timber
 
@@ -240,9 +237,6 @@ private fun YellowBox(gotoWebViewCallback: (String) -> Unit) {
     }
 }
 
-@Composable
-fun dpToSp(dp: Dp) = with(LocalDensity.current) { dp.toSp() }
-
 @ExperimentalUnitApi
 @Composable
 internal fun MapViewItem(name: String, googleSignCallback: () -> Unit) {
@@ -301,7 +295,7 @@ internal fun MapViewItem(name: String, googleSignCallback: () -> Unit) {
                     googleSignCallback.invoke()
                 },
             color = Color.White,
-            fontSize = TextUnit(dpToSp(14.dp).value, TextUnitType.Sp),
+            fontSize = 14.ScaleAwareSp,
             fontFamily = FontFamily.SansSerif,
             fontWeight = FontWeight.W500,
         )
