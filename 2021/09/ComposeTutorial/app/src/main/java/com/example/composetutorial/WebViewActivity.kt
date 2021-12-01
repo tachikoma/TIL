@@ -87,7 +87,7 @@ class WebViewActivity : ComponentActivity() {
         }
     }
 
-    private val defaultChromeClient = DefaultChromeClient(this)
+    private val defaultChromeClient = OpenWindowChromeClient(this)
 
     private val defaultWebViewClient =
         BaseWebViewClient(this, object : IDefaultWebViewClientStrategy {
@@ -121,7 +121,7 @@ fun RootScreenUrl(
 ) {
     WebViewScreen(modifier = Modifier.fillMaxHeight(), onInit = {
         it.loadUrl(url)
-    }, defaultWebViewClient, defaultWebChromeClient, webBridge, onBack)
+    }, defaultWebViewClient, defaultWebChromeClient, webBridge, onBack = onBack)
 }
 
 @Composable
@@ -133,8 +133,9 @@ fun RootScreenData(
     onBack: ((WebView?) -> Unit)? = null,
 ) {
     WebViewScreen(modifier = Modifier.fillMaxHeight(), onInit = {
+        it.settings.setSupportMultipleWindows(true)
         it.loadData(data, "text/html", "UTF-8")
-    }, defaultWebViewClient, defaultWebChromeClient, webBridge, onBack)
+    }, defaultWebViewClient, defaultWebChromeClient, webBridge, onBack = onBack)
 }
 
 

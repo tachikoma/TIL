@@ -17,6 +17,7 @@ fun WebViewScreen(
     webViewClientImpl: BaseWebViewClient? = null,
     chromeClientImpl: DefaultChromeClient? = null,
     webBridge: WebBridge? = null,
+    onUpdate: ((WebView) -> Unit) = {},
     onBack: ((WebView?) -> Unit)? = null,
 ) {
     var webView: WebView? = null
@@ -36,7 +37,7 @@ fun WebViewScreen(
             webView = this
             onInit(this)
         }
-    }, modifier = modifier)
+    }, modifier = modifier, update = onUpdate)
     BackHandler {
         coroutineScope.launch {
             onBack?.invoke(webView)
