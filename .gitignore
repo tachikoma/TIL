@@ -36,3 +36,6 @@ playground.xcworkspace
 xcuserdata
 
 .DS_Store
+.gradle
+.idea
+build/
