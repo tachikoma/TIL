@@ -39,3 +39,8 @@ xcuserdata
 .gradle
 .idea
 build/
+Cargo.lock
+CACHEDIR.TAG
+.rustc_info.json
+target
+20230104/hello
