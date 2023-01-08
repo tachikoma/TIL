@@ -12,7 +12,7 @@
 
 아래 링크에서 github 계정과 프로젝트 이름만 있으면 생성해서 상단에 표시되는 것과 같이 카운트를 붙일 수 있다.
 
-[HITS!](https://hits.seeyoufarm.com/)
+<a href="https://hits.seeyoufarm.com/" target="_blank">HITS!</a>
 
 ## github page
 github 내용으로 웹사이트를 만들어 주는 기능
@@ -21,16 +21,19 @@ github 내용으로 웹사이트를 만들어 주는 기능
 
   \- 다른 Repository의 경우는 tachikoma.github.io/{Repository 이름} 형태로 접근이 가능함
 
-* [쉽고 빠르게 수준 급의 GitHub 블로그 만들기 - jekyll remote theme으로](https://dreamgonfly.github.io/2018/01/27/jekyll-remote-theme.html)
-* [깃허브로 나만의 웹 사이트 만들기](https://brunch.co.kr/@everiwon/42)
+* <a href="https://dreamgonfly.github.io/2018/01/27/jekyll-remote-theme.html" target="_blank">쉽고 빠르게 수준 급의 GitHub 블로그 만들기 - jekyll remote theme으로</a>
+* <a href="https://brunch.co.kr/@everiwon/42" target="_blank">깃허브로 나만의 웹 사이트 만들기</a>
 
-
+## 마크 다운에서도 새 창에서 띄우기
+HTML \<a\> 태그에 target="_blank" 넣기로 해야 한다. 
 
 ------
 
 [DNS](2018/12/DNS)
 
-[20230108 Rust](20230108)
+------
+
+[20230108 Comprehensive Rust](20230108)
 
 [20230104 Rust](20230104)
 
