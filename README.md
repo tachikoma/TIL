@@ -1,6 +1,8 @@
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Ftachikoma%2FTIL&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 # Today I Learned
+[Rust 최소 기능을 갖춘 커널 빌드 테스트 해 봄 20230114](20230114)
+
 [Rust iOS, Web, AOS 라이브러리 바인딩 위한 빌드를 테스트 해 봄 20230110](20230110)
 
 [Writing an OS in Rust - 'Freestanding 실행파일' 만들기 20230109](20230109)
