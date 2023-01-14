@@ -1,0 +1,29 @@
+[package]
+name = "rust-cross-aos"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+rust-cross = { path = "../rust-cross" }
+jni = { version = "0.20.0", default-features = false }
+
+[target.armv7-linux-androideabi.dependencies]
+android_logger = "0.3.0"
+log = "0.3.0"
+
+[target.aarch64-linux-android.dependencies]
+android_logger = "0.3.0"
+log = "0.3.0"
+
+[target.x86_64-linux-android.dependencies]
+android_logger = "0.3.0"
+log = "0.3.0"
+
+[target.i686-linux-android.dependencies]
+android_logger = "0.3.0"
+log = "0.3.0"
