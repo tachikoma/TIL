@@ -13,5 +13,5 @@ NDK 로 링크 실패가 발생함
 
 [Rust bindings to the Android NDK](https://github.com/rust-mobile/ndk) 를 찾아서 해결함(잘 되는게 맞는 거겠지?)
 
-최종본 [build-android-libs.sh](build-android-libs.sh)
+최종본 [build-android-libs.sh](cross/rust-cross-aos/build-android-libs.sh)
 
