@@ -2,7 +2,7 @@
 
 Rust iOS, Web, AOS 라이브러리 바인딩 위한 빌드를 테스트 해 봄
 
-## AOS 바인등은 NDK를 써야하는데 여기저기서 찾아서 [Android Rust JNI tests](https://github.com/supercurio/android-rust-jni-tests) 를 찾아서 설정해 보았지만 빌드가 안되었다.
+## AOS 바인딩은 NDK를 써야하는데 여기저기서 찾아서 [Android Rust JNI tests](https://github.com/supercurio/android-rust-jni-tests) 를 찾아서 설정해 보았지만 빌드가 안되었다.
 NDK toolchain 설정이 필요하고
 
 NDK 로 링크 실패가 발생함 
